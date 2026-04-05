@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useLocation } from 'react-router-dom'
 import { VHS_EVENT_VIDEO_STATUS } from '../utils/vhs_events'
 
@@ -106,13 +107,13 @@ export default function AudioManager() {
     }
   }
 
-  return (
+  return createPortal(
     <button
       id="audio-toggle"
       onClick={toggleMute}
       aria-label={muted ? 'Unmute' : 'Mute'}
       style={{
-        position: 'fixed', bottom: '16px', right: '16px', zIndex: 9500,
+        position: 'fixed', bottom: '16px', right: '16px', zIndex: 10000,
         background: 'rgba(5, 2, 3, 0.9)',
         border: `1px solid ${muted ? 'var(--text-ghost)' : 'var(--red-dim)'}`,
         color: muted ? 'var(--text-muted)' : 'var(--red-primary)',
@@ -122,6 +123,7 @@ export default function AudioManager() {
       }}
     >
       {muted ? '◼ AUDIO OFF' : '◆ AUDIO ON'}
-    </button>
+    </button>,
+    document.body
   )
 }
