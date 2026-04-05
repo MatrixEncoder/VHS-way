@@ -94,27 +94,31 @@ export default function VideoPlayer({ src, classification = 'RESTRICTED', videoI
         position: 'relative',
         background: '#000',
         width: '100%',
+        margin: '0 auto',
         userSelect: 'none',
         border: '1px solid var(--border)',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      {/* Video element */}
-      <video
-        ref={videoRef}
-        src={src}
-        onClick={togglePlay}
-        style={{
-          width: '100%',
-          display: 'block',
-          cursor: 'pointer',
-          filter: 'grayscale(0.3) contrast(1.15)',
-          maxHeight: '50vh',
-          objectFit: 'contain',
-          background: '#000',
-        }}
-        preload="metadata"
-        playsInline
-      />
+      {/* Video wrapper to contain overlays */}
+      <div style={{ position: 'relative', width: '100%', background: '#000', display: 'flex', justifyContent: 'center' }}>
+        <video
+          ref={videoRef}
+          src={src}
+          onClick={togglePlay}
+          style={{
+            width: '100%',
+            height: 'auto',
+            maxHeight: '60vh',
+            display: 'block',
+            cursor: 'pointer',
+            filter: 'grayscale(0.3) contrast(1.15)',
+            objectFit: 'contain',
+          }}
+          preload="metadata"
+          playsInline
+        />
 
       {/* Scanline overlay on video */}
       <div style={{
@@ -177,6 +181,7 @@ export default function VideoPlayer({ src, classification = 'RESTRICTED', videoI
           </div>
         </div>
       )}
+      </div>
 
       {/* Controls bar */}
       <div style={{

@@ -19,8 +19,8 @@ export default function AudioManager() {
       // ── Background Music ──
       const audio = new Audio('/bg-music.mp3')
       audio.loop = true
-      // Faint ambient volume - extremely low as requested
-      audio.volume = 0.005 
+      // Increased ambient volume (audible on mobile speakers)
+      audio.volume = 0.25
       audio.play().catch(console.warn)
       bgMusicRef.current = audio
 
