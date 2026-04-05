@@ -371,7 +371,7 @@
   .modal-container { 
     border: none; 
     max-width: 100vw; 
-    min-height: 100vh;
+    min-height: auto; /* Remove forced 100vh stretch */
     animation: none;
     display: flex;
     flex-direction: column;
@@ -383,7 +383,12 @@
   .modal-story { padding: 20px 16px; }
   .modal-story-text { font-size: 15px; }
 
-  .modal-info { grid-template-columns: 1fr; padding: 20px 16px; gap: 16px; flex-grow: 1; }
+  .modal-info { 
+    grid-template-columns: 1fr; 
+    padding: 20px 16px 40px; /* Added clean bottom padding */
+    gap: 16px; 
+    flex-grow: 0; /* Remove forced metadata stretch */
+  }
   .modal-info-row { font-size: 14px; }
   .modal-info-label { font-size: 12px; }
 }
