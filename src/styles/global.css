@@ -1,0 +1,294 @@
+/* ─── TheVHS-way Global Design System ───────────────────────────────────────
+   E.C.H.O. Division Archive Terminal
+   ANALOG HORROR — Corrupted archive. Crimson. Dread. 1987.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ── Color Tokens — Analog Horror: Dark Crimson / Dried Blood ── */
+:root {
+  --bg:              #050203;
+  --surface:         #0a0608;
+  --surface-2:       #100a0d;
+  --surface-3:       #160d10;
+
+  /* Primary accent — bloody but legible red */
+  --red-primary:     #cc4444;
+  --red-bright:      #ff4444;
+  --red-dim:         #882222;
+  --red-ghost:       #331111;
+
+  /* Secondary — desaturated amber/rust */
+  --amber:           #cc7744;
+  --amber-bright:    #ffaa55;
+  --amber-dim:       #884422;
+
+  /* Text — off-white desaturated red tints, like old paper */
+  --text-primary:    #ffe3e3;
+  --text-muted:      #aa8888;
+  --text-ghost:      #664444;
+  --text-white:      #ffffff;
+
+  /* Borders */
+  --border:          #2a1010;
+  --border-bright:   #6b1a1a;
+  --border-mid:      #3d1515;
+
+  /* Legacy aliases so existing components don't break */
+  --green-bright:    var(--red-bright);
+  --green-mid:       var(--red-primary);
+  --green-dim:       var(--red-dim);
+  --green-ghost:     var(--red-ghost);
+  --red-warn:        #3d0000;
+
+  --font-mono:       'Share Tech Mono', 'Courier New', monospace;
+  --font-vhs:        'VT323', monospace;
+  --font-courier:    'Courier Prime', monospace;
+  --scanline-opacity: 0.05;
+  --crt-curve:       4px;
+  --transition-glitch: 300ms;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+  /* Subtle CRT barrel distortion illusion */
+  background: #000;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  /* Faint blood-red ambient glow */
+  text-shadow: 0 0 6px rgba(100, 10, 10, 0.4);
+  cursor: default;
+}
+
+/* ── Scrollbar — degraded system ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--red-dim); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--red-primary); }
+
+/* ── Typography Utilities ── */
+.font-vhs   { font-family: var(--font-vhs); }
+.font-mono  { font-family: var(--font-mono); }
+.text-red   { color: var(--red-bright); }
+.text-amber { color: var(--amber); }
+.text-dim   { color: var(--text-muted); }
+.text-warn  { color: var(--red-bright); }
+
+/* ── Flicker Animation ── */
+@keyframes flicker {
+  0%   { opacity: 1; }
+  2%   { opacity: 0.85; }
+  4%   { opacity: 1; }
+  8%   { opacity: 0.92; }
+  70%  { opacity: 1; }
+  72%  { opacity: 0.88; }
+  100% { opacity: 1; }
+}
+
+@keyframes flicker-fast {
+  0%, 100% { opacity: 1; }
+  10%       { opacity: 0.7; }
+  11%       { opacity: 1; }
+  50%       { opacity: 0.95; }
+  51%       { opacity: 0.6; }
+  52%       { opacity: 1; }
+}
+
+/* ── Glitch Keyframes ── */
+@keyframes glitch-h {
+  0%         { clip-path: inset(0 0 95% 0); transform: translate(-4px, 0); }
+  20%        { clip-path: inset(30% 0 60% 0); transform: translate(4px, 0); }
+  40%        { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 0); }
+  60%        { clip-path: inset(80% 0 5% 0); transform: translate(3px, 0); }
+  80%        { clip-path: inset(20% 0 70% 0); transform: translate(-1px, 0); }
+  100%       { clip-path: inset(0 0 95% 0); transform: translate(0); }
+}
+
+@keyframes glitch-rgb {
+  0%   { text-shadow: 2px 0 var(--red-bright), -2px 0 #0ff; }
+  25%  { text-shadow: -3px 0 var(--red-bright), 3px 0 #0ff; }
+  50%  { text-shadow: 0 0 0; }
+  75%  { text-shadow: 3px 0 #0ff, -3px 0 var(--red-bright); }
+  100% { text-shadow: 0 0 0; }
+}
+
+@keyframes scan-sweep {
+  0%   { top: -10%; }
+  100% { top: 110%; }
+}
+
+@keyframes static-noise {
+  0%   { background-position: 0 0; }
+  100% { background-position: 100% 100%; }
+}
+
+@keyframes blink-cursor {
+  0%, 50%  { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes signal-in {
+  0%   { opacity: 0; transform: scaleY(0.02) scaleX(1.05); filter: brightness(3); }
+  30%  { opacity: 1; transform: scaleY(0.1) scaleX(1.03); filter: brightness(2); }
+  60%  { opacity: 1; transform: scaleY(0.5) scaleX(1.01); filter: brightness(1.3); }
+  80%  { transform: scaleY(0.9) scaleX(1); filter: brightness(1.1); }
+  100% { opacity: 1; transform: scaleY(1) scaleX(1); filter: brightness(1); }
+}
+
+@keyframes roll {
+  0%   { background-position-y: 0; }
+  100% { background-position-y: 200px; }
+}
+
+@keyframes power-on {
+  0%   { opacity: 0; transform: scaleY(0.01) scaleX(1.08); filter: brightness(5) sepia(1) hue-rotate(-20deg) blur(2px); }
+  15%  { opacity: 1; transform: scaleY(0.05) scaleX(1.05); filter: brightness(3) sepia(0.8) blur(1px); }
+  40%  { transform: scaleY(0.3) scaleX(1.02); filter: brightness(1.5) sepia(0.3); }
+  70%  { transform: scaleY(0.85) scaleX(1.01); filter: brightness(1.1); }
+  90%  { transform: scaleY(0.98) scaleX(1); }
+  100% { opacity: 1; transform: scaleY(1) scaleX(1); filter: brightness(1); }
+}
+
+/* ── Analog Horror Specific Animations ── */
+@keyframes pulse-dread {
+  0%, 100% { opacity: 1; }
+  45%       { opacity: 0.96; }
+  46%       { opacity: 0.7; }
+  47%       { opacity: 0.96; }
+  80%       { opacity: 1; }
+  81%       { opacity: 0.85; }
+  82%       { opacity: 1; }
+}
+
+@keyframes distort-x {
+  0%, 90%, 100% { transform: skewX(0deg); }
+  91%           { transform: skewX(-1.5deg); }
+  93%           { transform: skewX(1deg); }
+  95%           { transform: skewX(-0.5deg); }
+}
+
+@keyframes vhs-tracking {
+  0%   { transform: translateY(0) scaleX(1); }
+  10%  { transform: translateY(-2px) scaleX(1.003); }
+  20%  { transform: translateY(1px) scaleX(0.998); }
+  30%  { transform: translateY(0) scaleX(1); }
+  100% { transform: translateY(0) scaleX(1); }
+}
+
+@keyframes noise-drift {
+  0%   { background-position: 0 0; }
+  10%  { background-position: -5% -10%; }
+  20%  { background-position: -15% 5%; }
+  30%  { background-position: 7% -25%; }
+  40%  { background-position: -5% 25%; }
+  50%  { background-position: -15% 10%; }
+  60%  { background-position: 15% 0%; }
+  70%  { background-position: 0 15%; }
+  80%  { background-position: 3% 35%; }
+  90%  { background-position: -10% 10%; }
+  100% { background-position: 0 0; }
+}
+
+/* ── Layout ── */
+#root {
+  min-height: 100vh;
+  position: relative;
+  animation: power-on 1.2s ease-out forwards;
+}
+
+.page-container {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Buttons — dark crimson, analog horror feel ── */
+.btn-terminal {
+  display: inline-block;
+  background: transparent;
+  border: 1px solid var(--red-dim);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  padding: 10px 28px;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s;
+}
+
+.btn-terminal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(139,26,26,0.12), transparent);
+  transition: left 0.5s;
+}
+
+.btn-terminal:hover::before { left: 100%; }
+.btn-terminal:hover {
+  background: rgba(139,26,26,0.08);
+  border-color: var(--red-primary);
+  box-shadow: 0 0 20px rgba(139,26,26,0.25), inset 0 0 20px rgba(139,26,26,0.06);
+  color: var(--text-white);
+  text-shadow: 0 0 10px rgba(192,57,43,0.5);
+}
+
+.btn-terminal:active {
+  transform: scale(0.98);
+  background: rgba(139,26,26,0.15);
+}
+
+/* ── Classification Badges ── */
+.badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  text-transform: uppercase;
+}
+.badge-restricted { color: var(--amber); border-color: var(--amber-dim); }
+.badge-classified { color: var(--red-bright); border-color: var(--red-dim); }
+.badge-level3     { color: var(--text-muted); border-color: var(--border); }
+.badge-top-secret { color: var(--red-bright); border-color: var(--red-primary); animation: flicker 3s infinite; text-shadow: 0 0 8px rgba(192,57,43,0.4); }
+
+/* ── Divider ── */
+.terminal-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), var(--red-dim), var(--border), transparent);
+  margin: 20px 0;
+}
+
+/* ── Cursor ── */
+.cursor::after {
+  content: '█';
+  animation: blink-cursor 1s step-end infinite;
+  color: var(--red-primary);
+}
+
+/* ── Selection ── */
+::selection {
+  background: rgba(139,26,26,0.3);
+  color: var(--text-white);
+}
