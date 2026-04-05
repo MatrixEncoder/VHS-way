@@ -4,11 +4,23 @@
  * Features: play/pause, scrubber, volume, time display, fullscreen
  */
 import { useRef, useState, useEffect, useCallback } from 'react'
+import { dispatchVHSVideoEvent } from '../utils/vhs_events'
 
 export default function VideoPlayer({ src, classification = 'RESTRICTED', videoId = '' }) {
   const videoRef = useRef(null)
   const scrubRef = useRef(null)
   const [playing, setPlaying] = useState(false)
+  
+  // Audio ducking signal
+  useEffect(() => {
+    dispatchVHSVideoEvent(playing)
+  }, [playing])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => dispatchVHSVideoEvent(false)
+  }, [])
+
   const [currentTime, setCurrent] = useState(0)
   const [duration, setDuration] = useState(0)
   const [volume, setVolume] = useState(0.8)

@@ -86,6 +86,9 @@ function ArchiveCard({ video, onClick }) {
   )
 }
 
+// Modal
+import { createPortal } from 'react-dom'
+
 export default function Archive() {
   const [activeVideo, setActiveVideo] = useState(null)
   const [filter, setFilter] = useState('ALL')
@@ -157,9 +160,10 @@ export default function Archive() {
         )}
       </div>
 
-      {/* Modal */}
-      {activeVideo && (
-        <VideoModal video={activeVideo} onClose={closeModal} />
+      {/* Portal-rendered Modal */}
+      {activeVideo && createPortal(
+        <VideoModal video={activeVideo} onClose={closeModal} />,
+        document.body
       )}
     </div>
   )
