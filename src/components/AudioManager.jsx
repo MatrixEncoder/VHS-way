@@ -13,65 +13,82 @@ export default function AudioManager() {
   const location = useLocation()
 
   const startAudio = () => {
-    if (started) return
-
-    try {
-      // ── Background Music ──
+    // ── Background Music ──
+    if (!bgMusicRef.current) {
       const audio = new Audio('/bg-music.mp3')
       audio.loop = true
-      // Increased ambient volume (audible on mobile speakers)
-      audio.volume = 0.25
-      audio.play().catch(console.warn)
+      audio.volume = 0.45
       bgMusicRef.current = audio
+    }
 
-      // ── Occasional static bursts (Web Audio API) ──
-      const ctx = new (window.AudioContext || window.webkitAudioContext)()
-      ctxRef.current = ctx
+    const audio = bgMusicRef.current
+    if (audio.paused && !muted) {
+      audio.play().then(() => {
+        setStarted(true)
+      }).catch(err => {
+        console.warn('Playback blocked by browser:', err)
+      })
+    }
 
-      const scheduleStatic = () => {
-        const wait = 15000 + Math.random() * 30000
-        setTimeout(() => {
-          if (!ctxRef.current || muted) return
-          const staticGain = ctx.createGain()
-          staticGain.gain.setValueAtTime(0, ctx.currentTime)
-          staticGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02)
-          staticGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15)
-          staticGain.connect(ctx.destination)
+    // ── Static Bursts (Web Audio API) ──
+    if (!ctxRef.current) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)()
+        ctxRef.current = ctx
 
-          const whiteBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate)
-          const wd = whiteBuffer.getChannelData(0)
-          for (let i = 0; i < wd.length; i++) wd[i] = Math.random() * 2 - 1
-          const ws = ctx.createBufferSource()
-          ws.buffer = whiteBuffer
-          ws.connect(staticGain)
-          ws.start()
+        const scheduleStatic = () => {
+          const wait = 15000 + Math.random() * 30000
+          setTimeout(() => {
+            if (!ctxRef.current || muted) return
+            // Ensure context is running
+            if (ctx.state === 'suspended') ctx.resume()
+            
+            const staticGain = ctx.createGain()
+            staticGain.gain.setValueAtTime(0, ctx.currentTime)
+            staticGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02)
+            staticGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15)
+            staticGain.connect(ctx.destination)
 
-          scheduleStatic()
-        }, wait)
+            const whiteBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate)
+            const wd = whiteBuffer.getChannelData(0)
+            for (let i = 0; i < wd.length; i++) wd[i] = Math.random() * 2 - 1
+            const ws = ctx.createBufferSource()
+            ws.buffer = whiteBuffer
+            ws.connect(staticGain)
+            ws.start()
+
+            scheduleStatic()
+          }, wait)
+        }
+        scheduleStatic()
+      } catch (e) {
+        console.warn('Web Audio API not supported:', e)
       }
-      scheduleStatic()
-
-      setStarted(true)
-    } catch (e) {
-      console.warn('Audio unavailable:', e)
+    } else if (ctxRef.current.state === 'suspended') {
+      ctxRef.current.resume()
     }
   }
 
-  // Start audio on mount (since it now mounts *after* login interaction)
+  // Effect to manage interaction listeners
   useEffect(() => {
+    // Try immediate start (works if component mounted from a click/interaction)
     startAudio()
     
-    // Backup interaction listener just in case browser policy is extra strict
-    const handler = () => {
+    // Listen for any interaction to trigger/resume audio
+    const handleInteraction = () => {
       startAudio()
     }
-    window.addEventListener('click', handler, { once: true })
-    window.addEventListener('keydown', handler, { once: true })
+
+    window.addEventListener('mousedown', handleInteraction)
+    window.addEventListener('keydown', handleInteraction)
+    window.addEventListener('touchstart', handleInteraction)
+    
     return () => {
-      window.removeEventListener('click', handler)
-      window.removeEventListener('keydown', handler)
+      window.removeEventListener('mousedown', handleInteraction)
+      window.removeEventListener('keydown', handleInteraction)
+      window.removeEventListener('touchstart', handleInteraction)
     }
-  }, [])
+  }, [muted])
 
   // Mute toggle
   const toggleMute = () => {
