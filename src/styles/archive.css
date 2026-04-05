@@ -306,6 +306,54 @@
 
 .modal-info-label { color: var(--text-ghost); margin-right: 8px; text-transform: uppercase; font-size: 10px; }
 
+/* Narrative Story */
+.modal-story {
+  padding: 24px;
+  background: rgba(139, 0, 0, 0.05); /* Slight blood tint */
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-story::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 0, 0, 0.03) 2px, rgba(139, 0, 0, 0.03) 3px);
+  pointer-events: none;
+}
+
+.modal-story-header {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--amber);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-story-text {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-primary);
+  opacity: 0.9;
+  letter-spacing: 0.02em;
+  position: relative;
+  z-index: 1;
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
 @media (max-width: 600px) {
   .archive__grid { grid-template-columns: 1fr; padding: 0 16px 40px; }
   .archive__header { padding: 20px 16px 0; }
@@ -325,12 +373,17 @@
     max-width: 100vw; 
     min-height: 100vh;
     animation: none;
+    display: flex;
+    flex-direction: column;
   }
-  .modal-header { padding: 16px; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .modal-header { padding: 16px; flex-direction: column; gap: 12px; align-items: flex-start; flex-shrink: 0; }
   .modal-header-title { font-size: 14px; }
   .modal-close { padding: 8px 24px; font-size: 12px; width: 100%; border-color: var(--red-mid); }
   
-  .modal-info { grid-template-columns: 1fr; padding: 20px 16px; gap: 16px; }
+  .modal-story { padding: 20px 16px; }
+  .modal-story-text { font-size: 15px; }
+
+  .modal-info { grid-template-columns: 1fr; padding: 20px 16px; gap: 16px; flex-grow: 1; }
   .modal-info-row { font-size: 14px; }
   .modal-info-label { font-size: 12px; }
 }

@@ -56,6 +56,16 @@ export default function VideoModal({ video, onClose }) {
           />
         </div>
 
+        {/* Narrative Story Section */}
+        <div className="modal-story">
+          <div className="modal-story-header">
+            <span className="blink">●</span> SIGNAL TRANSCRIPTION / RECOVERED DATA
+          </div>
+          <p className="modal-story-text">
+            {video.redditStory}
+          </p>
+        </div>
+
         {/* Metadata */}
         <div className="modal-info">
           <div className="modal-info-row">

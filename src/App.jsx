@@ -54,23 +54,26 @@ function AppContent() {
         <LoginOverlay onLogin={setLoggedUser} />
       ) : (
         <>
-          <GlobalBackground />
-          <StaticBurst />
-          <NavBar />
-          <ErrorPopup />
           <RandomVideoPopup />
-          <ScrollReset />
-
-          <Routes>
-            <Route path="/"           element={<Home />} />
-            <Route path="/archive"    element={<Archive />} />
-            <Route path="/logs"       element={<Logs />} />
-            <Route path="/classified" element={<Classified />} />
-            <Route path="*"           element={<NotFound />} />
-          </Routes>
           
-          {/* Audio Engine mounts only after login so music doesn't play initially */}
-          <AudioManager />
+          <div className="app-power-on">
+            <GlobalBackground />
+            <StaticBurst />
+            <NavBar />
+            <ErrorPopup />
+            <ScrollReset />
+
+            <Routes>
+              <Route path="/"           element={<Home />} />
+              <Route path="/archive"    element={<Archive />} />
+              <Route path="/logs"       element={<Logs />} />
+              <Route path="/classified" element={<Classified />} />
+              <Route path="*"           element={<NotFound />} />
+            </Routes>
+            
+            {/* Audio Engine mounts only after login so music doesn't play initially */}
+            <AudioManager />
+          </div>
         </>
       )}
     </>

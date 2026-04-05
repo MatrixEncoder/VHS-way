@@ -209,7 +209,11 @@ body {
 #root {
   min-height: 100vh;
   position: relative;
+}
+
+.app-power-on {
   animation: power-on 1.2s ease-out forwards;
+  min-height: 100vh;
 }
 
 .page-container {
